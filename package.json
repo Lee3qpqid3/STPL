@@ -1,0 +1,19 @@
+{
+  "name": "stpl",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "openai": "latest",
+    "postgres": "latest"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}
