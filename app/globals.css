@@ -370,3 +370,286 @@ textarea {
     overflow-y: auto;
   }
 }
+
+.dashboardShell {
+  align-items: flex-start;
+}
+
+.dashboardCard {
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.visualGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.visualCard {
+  background: #121a2b;
+  border: 1px solid #26334c;
+  border-radius: 22px;
+  padding: 20px;
+  min-height: 260px;
+}
+
+.visualCard h2 {
+  margin-top: 0;
+  margin-bottom: 14px;
+  font-size: 20px;
+}
+
+.fullVisual {
+  margin: 18px 0;
+  min-height: auto;
+}
+
+.small {
+  font-size: 14px;
+}
+
+.emptyChart {
+  min-height: 180px;
+  border: 1px dashed #334155;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  text-align: center;
+  padding: 20px;
+}
+
+.barChart {
+  display: grid;
+  gap: 14px;
+}
+
+.barRow {
+  display: grid;
+  grid-template-columns: 64px 1fr 54px;
+  gap: 10px;
+  align-items: center;
+}
+
+.barLabel {
+  color: #dbe7ff;
+  font-size: 14px;
+}
+
+.barTrack {
+  height: 14px;
+  border-radius: 999px;
+  background: #0b1020;
+  overflow: hidden;
+  border: 1px solid #26334c;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.barValue {
+  color: #aeb9cc;
+  font-size: 13px;
+  text-align: right;
+}
+
+.pieWrap {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 18px;
+  align-items: center;
+}
+
+.pieChart {
+  width: 150px;
+  height: 150px;
+  border-radius: 999px;
+  border: 8px solid #0b1020;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.28);
+}
+
+.legend {
+  display: grid;
+  gap: 10px;
+}
+
+.legendItem {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  color: #dce7ff;
+  font-size: 14px;
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+}
+
+.ganttBox {
+  display: grid;
+  gap: 12px;
+}
+
+.ganttScale {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  color: #94a3b8;
+  font-size: 12px;
+  padding-left: 82px;
+}
+
+.ganttRow {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.ganttLabel {
+  color: #dce7ff;
+  font-size: 14px;
+}
+
+.ganttTrack {
+  position: relative;
+  height: 34px;
+  border-radius: 12px;
+  background: #0b1020;
+  border: 1px solid #26334c;
+  overflow: hidden;
+}
+
+.ganttBar {
+  position: absolute;
+  top: 5px;
+  height: 22px;
+  border-radius: 999px;
+  color: white;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  padding: 0 8px;
+  min-width: 36px;
+}
+
+.weekGantt {
+  display: grid;
+  gap: 14px;
+}
+
+.weekTask {
+  background: #0d1424;
+  border: 1px solid #26334c;
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.weekTaskTop {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.weekTaskTop b {
+  font-size: 16px;
+}
+
+.weekTaskTop span {
+  color: #aeb9cc;
+  line-height: 1.5;
+  text-align: right;
+}
+
+.weekTaskTrack {
+  height: 14px;
+  border-radius: 999px;
+  background: #0b1020;
+  border: 1px solid #26334c;
+  overflow: hidden;
+}
+
+.weekTaskFill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.weekTaskMeta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.colorListItem {
+  position: relative;
+  overflow: hidden;
+  padding-left: 26px;
+}
+
+.subjectStripe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 8px;
+  height: 100%;
+}
+
+/* 설정창 간격 개선 */
+.card.narrow .form {
+  margin-bottom: 24px;
+}
+
+.card.narrow > .ghostButton.full,
+.card.narrow > button.ghostButton.full {
+  margin-top: 20px;
+}
+
+@media (max-width: 1000px) {
+  .visualGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .pieWrap {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .legend {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .barRow {
+    grid-template-columns: 54px 1fr 44px;
+  }
+
+  .ganttScale {
+    padding-left: 62px;
+  }
+
+  .ganttRow {
+    grid-template-columns: 54px 1fr;
+  }
+
+  .weekTaskTop {
+    display: grid;
+  }
+
+  .weekTaskTop span {
+    text-align: left;
+  }
+}
