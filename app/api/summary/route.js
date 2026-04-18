@@ -59,30 +59,29 @@ export async function GET(req) {
         SELECT *
         FROM study_sessions
         WHERE user_id = ${user.id}
-        AND (
-          start_time::date = ${koreaToday}::date
-          OR created_at::date = ${koreaToday}::date
-        )
         ORDER BY created_at DESC
+        LIMIT 50
       `
 
-      const messages = await db`
-        SELECT *
-        FROM conversation_messages
-        WHERE user_id = ${user.id}
-        ORDER BY created_at DESC
-        LIMIT 10
-      `
+      const todaySessions = sessions.filter((s) => {
+        const raw = s.start_time || s.created_at
+        if (!raw) return false
+        const kst = new Date(new Date(raw).toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
+        const y = kst.getFullYear()
+        const m = String(kst.getMonth() + 1).padStart(2, '0')
+        const d = String(kst.getDate()).padStart(2, '0')
+        return `${y}-${m}-${d}` === koreaToday
+      })
 
       const events = await db`
         SELECT *
         FROM extracted_learning_events
         WHERE user_id = ${user.id}
         ORDER BY created_at DESC
-        LIMIT 20
+        LIMIT 30
       `
 
-      const todayMinutes = sessions.reduce(
+      const todayMinutes = todaySessions.reduce(
         (sum, s) => sum + Number(s.duration_minutes || 0),
         0
       )
@@ -90,8 +89,7 @@ export async function GET(req) {
       return NextResponse.json({
         koreaToday,
         activeSession: activeSession[0] || null,
-        sessions,
-        messages,
+        sessions: todaySessions,
         events,
         todayMinutes,
       })
