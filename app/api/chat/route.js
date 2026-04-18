@@ -159,23 +159,22 @@ async function applyEvents({ db, user, userMessageId, message, analysis }) {
     }
   }
 
-  for (const plan of analysis.weeklyPlanUpdates || []) {
-    await db`
-      INSERT INTO weekly_plans
-      (user_id, week_start, week_end, subject, target_description, target_quantity, estimated_required_time, priority, risk_level, status)
-      VALUES (
-        ${user.id},
-        ${weekStart},
-        ${weekEnd},
-        ${plan.subject || '미상'},
-        ${plan.targetDescription || message},
-        ${plan.targetQuantity || null},
-        ${plan.estimatedRequiredTime || null},
-        ${plan.priority || 3},
-        ${plan.riskLevel || 'unknown'},
-        'active'
-      )
-    `
+  const planUpdates = [...(analysis.weeklyPlanUpdates || [])]
+
+for (const event of analysis.events || []) {
+  if (
+    event.eventType === 'weekly_plan_upsert' ||
+    event.eventType === 'weekly_plan_create' ||
+    event.eventType === 'weekly_plan_update'
+  ) {
+    planUpdates.push({
+      subject: event.subject || '미상',
+      targetDescription: event.taskDescription || message,
+      targetQuantity: event.targetQuantity || event.quantityDone || null,
+      estimatedRequiredTime: event.inferredData?.estimatedRequiredTime || null,
+      priority: event.inferredData?.priority || 3,
+      riskLevel: event.inferredData?.riskLevel || 'unknown',
+    })
   }
 }
 
