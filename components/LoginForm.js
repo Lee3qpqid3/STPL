@@ -18,21 +18,31 @@ export default function LoginForm() {
     setError('')
     setLoading(true)
 
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    })
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      })
 
-    const data = await res.json()
-    setLoading(false)
+      let data = {}
+      try {
+        data = await res.json()
+      } catch {
+        data = { error: '서버가 JSON 응답을 반환하지 않았다. Vercel Function Logs를 확인해야 한다.' }
+      }
 
-    if (!res.ok) {
-      setError(data.error || '로그인 실패')
-      return
+      if (!res.ok) {
+        setError(data.error || `로그인 실패: ${res.status}`)
+        return
+      }
+
+      router.push(next)
+    } catch (err) {
+      setError('로그인 요청 자체가 실패했다. DATABASE_URL 또는 AUTH_SECRET 환경변수를 확인해라.')
+    } finally {
+      setLoading(false)
     }
-
-    router.push(next)
   }
 
   return (
