@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function LoginForm() {
   const router = useRouter()
@@ -13,6 +13,27 @@ export default function LoginForm() {
   const [rememberMe, setRememberMe] = useState(true)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [checking, setChecking] = useState(true)
+
+  useEffect(() => {
+    async function checkAlreadyLoggedIn() {
+      try {
+        const res = await fetch('/api/auth/me', { cache: 'no-store' })
+        const data = await res.json()
+
+        if (data.user) {
+          router.replace(next)
+          return
+        }
+      } catch {
+        // 무시
+      } finally {
+        setChecking(false)
+      }
+    }
+
+    checkAlreadyLoggedIn()
+  }, [router, next])
 
   async function login(e) {
     e.preventDefault()
@@ -33,12 +54,24 @@ export default function LoginForm() {
         return
       }
 
-      router.push(next)
+      router.replace(next)
     } catch {
       setError('로그인 요청이 실패했다.')
     } finally {
       setLoading(false)
     }
+  }
+
+  if (checking) {
+    return (
+      <main className="centerShell">
+        <section className="card narrow">
+          <p className="eyebrow">LOGIN</p>
+          <h1>로그인 확인 중</h1>
+          <p className="muted">기존 로그인 상태를 확인하고 있다.</p>
+        </section>
+      </main>
+    )
   }
 
   return (
