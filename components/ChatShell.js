@@ -61,12 +61,16 @@ export default function ChatShell() {
     }
 
     if (!res.ok) {
-      setMessages((prev) => [
-        ...prev,
-        { role: 'assistant', content: data.error || '처리 중 오류가 발생했다.' },
-      ])
-      return
-    }
+  setMessages((prev) => [
+    ...prev,
+    {
+      role: 'assistant',
+      content:
+        `${data.error || '처리 중 오류가 발생했다.'}\n\n상세 오류: ${data.detail || '상세 정보 없음'}`,
+    },
+  ])
+  return
+}
 
     setMessages((prev) => [
       ...prev,
