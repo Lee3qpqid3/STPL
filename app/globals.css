@@ -1,0 +1,327 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #080b12;
+  color: #f4f7fb;
+  font-family: Arial, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  font-family: inherit;
+}
+
+.homeShell,
+.centerShell {
+  min-height: 100vh;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.homeCenter {
+  width: 100%;
+  max-width: 980px;
+}
+
+.eyebrow {
+  margin: 0 0 12px 0;
+  color: #8fb3ff;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.homeTitle {
+  margin: 0;
+  font-size: clamp(42px, 7vw, 74px);
+  line-height: 1.02;
+  letter-spacing: -0.055em;
+}
+
+.homeDesc,
+.muted {
+  color: #aeb9cc;
+  line-height: 1.75;
+}
+
+.homeDesc {
+  max-width: 760px;
+  margin: 22px 0 28px;
+  font-size: 18px;
+}
+
+.promptForm {
+  width: 100%;
+}
+
+.promptInput,
+.composer textarea,
+.form input {
+  width: 100%;
+  border: 1px solid #253048;
+  background: #101725;
+  color: #f8fafc;
+  outline: none;
+}
+
+.promptInput {
+  min-height: 140px;
+  padding: 24px;
+  border-radius: 30px;
+  font-size: 18px;
+  line-height: 1.7;
+  resize: vertical;
+}
+
+.promptInput:focus,
+.composer textarea:focus,
+.form input:focus {
+  border-color: #5f8cff;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.primaryButton,
+.ghostButton {
+  border-radius: 999px;
+  padding: 13px 18px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+}
+
+.primaryButton {
+  background: #4e7dff;
+  color: white;
+}
+
+.ghostButton {
+  background: transparent;
+  border-color: #2b3751;
+  color: #dce7ff;
+}
+
+.full {
+  width: 100%;
+}
+
+.card {
+  width: 100%;
+  background: #101725;
+  border: 1px solid #202b40;
+  border-radius: 28px;
+  padding: 28px;
+}
+
+.card.narrow {
+  max-width: 520px;
+}
+
+.card.wide {
+  max-width: 980px;
+}
+
+.card h1 {
+  margin: 0 0 12px;
+  font-size: 38px;
+  letter-spacing: -0.035em;
+}
+
+.form {
+  display: grid;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.form label {
+  color: #d7e2f5;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.form input {
+  height: 50px;
+  border-radius: 16px;
+  padding: 0 14px;
+  font-size: 16px;
+}
+
+.errorText {
+  color: #ff9090;
+}
+
+.chatLayout {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+}
+
+.sidebar {
+  padding: 24px;
+  background: #0d1320;
+  border-right: 1px solid #1c2638;
+}
+
+.sidebar h2 {
+  margin: 0 0 10px;
+}
+
+.sideNav {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.sideNav a {
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: #151d2e;
+  border: 1px solid #24304a;
+}
+
+.chatMain {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.chatTop {
+  padding: 28px 28px 0;
+}
+
+.chatTop h1 {
+  margin: 0;
+  font-size: 36px;
+  letter-spacing: -0.04em;
+}
+
+.messages {
+  flex: 1;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.bubble {
+  max-width: 840px;
+  padding: 17px 20px;
+  border-radius: 22px;
+  border: 1px solid #202b40;
+  line-height: 1.75;
+}
+
+.bubble span {
+  color: #8fb3ff;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.bubble p {
+  margin: 8px 0 0;
+  white-space: pre-wrap;
+}
+
+.bubble.assistant {
+  background: #111827;
+}
+
+.bubble.user {
+  background: #182237;
+  align-self: flex-end;
+}
+
+.composer {
+  padding: 20px 28px 28px;
+  border-top: 1px solid #1c2638;
+  background: #0b101a;
+}
+
+.composer textarea {
+  min-height: 110px;
+  padding: 18px;
+  border-radius: 22px;
+  resize: vertical;
+  color: #f8fafc;
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 24px 0;
+}
+
+.statBox,
+.listItem {
+  background: #151d2e;
+  border: 1px solid #24304a;
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.statBox h3 {
+  margin: 0 0 8px;
+  color: #b9c8e3;
+}
+
+.statBox p {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.list {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0 24px;
+}
+
+.listItem {
+  display: grid;
+  gap: 6px;
+}
+
+.listItem span {
+  color: #aeb9cc;
+}
+
+@media (max-width: 860px) {
+  .chatLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid #1c2638;
+  }
+
+  .statGrid {
+    grid-template-columns: 1fr;
+  }
+}
