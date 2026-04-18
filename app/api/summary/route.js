@@ -15,13 +15,12 @@ function getKoreaDateString(date = new Date()) {
 function getKoreaWeekRange(date = new Date()) {
   const korea = new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
   const day = korea.getDay()
-  const diffToMonday = day === 0 ? -6 : 1 - day
 
-  const monday = new Date(korea)
-  monday.setDate(korea.getDate() + diffToMonday)
+  const sunday = new Date(korea)
+  sunday.setDate(korea.getDate() - day)
 
-  const sunday = new Date(monday)
-  sunday.setDate(monday.getDate() + 6)
+  const saturday = new Date(sunday)
+  saturday.setDate(sunday.getDate() + 6)
 
   const fmt = (d) => {
     const y = d.getFullYear()
@@ -31,8 +30,8 @@ function getKoreaWeekRange(date = new Date()) {
   }
 
   return {
-    weekStart: fmt(monday),
-    weekEnd: fmt(sunday),
+    weekStart: fmt(sunday),
+    weekEnd: fmt(saturday),
   }
 }
 
