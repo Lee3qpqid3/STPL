@@ -7,6 +7,7 @@ function getWeekRange(date = new Date()) {
   const d = new Date(date)
   const day = d.getDay()
   const diffToMonday = day === 0 ? -6 : 1 - day
+
   const monday = new Date(d)
   monday.setDate(d.getDate() + diffToMonday)
   monday.setHours(0, 0, 0, 0)
@@ -34,7 +35,7 @@ async function applyEvents({ db, user, userMessageId, message, analysis }) {
         ${userMessageId},
         ${event.eventType || 'unknown'},
         ${event.subject || null},
-        ${JSON.stringify(event)},
+        ${db.json(event)},
         ${event.confidence || 0.5}
       )
     `
@@ -129,6 +130,11 @@ async function applyEvents({ db, user, userMessageId, message, analysis }) {
           'reported'
         )
       `
+    }
+
+    if (event.eventType === 'daily_close') {
+      // 지금은 이벤트만 저장한다.
+      // 다음 단계에서 오늘 요약과 내일 계획 생성 로직을 붙인다.
     }
   }
 
@@ -231,9 +237,13 @@ export async function POST(req) {
       analysis,
     })
   } catch (err) {
-    console.error(err)
+    console.error('CHAT_ROUTE_ERROR', err)
+
     return NextResponse.json(
-      { error: err.status === 401 ? '로그인이 필요하다.' : '서버 처리 중 오류가 발생했다.' },
+      {
+        error: '서버 처리 중 오류가 발생했다.',
+        detail: String(err?.message || err),
+      },
       { status: err.status || 500 }
     )
   }
