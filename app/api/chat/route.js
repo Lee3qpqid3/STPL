@@ -45,6 +45,81 @@ function getWeekRange(date = new Date()) {
   }
 }
 
+function extractPlansFromText(message) {
+  const text = message || ''
+  if (!text.includes('이번 주') && !text.includes('주간')) return []
+
+  const subjects = ['수학', '국어', '영어', '물리', '화학', '생명', '지구', '한국사', '사회', '과학']
+  const plans = []
+
+  for (const subject of subjects) {
+    if (!text.includes(subject)) continue
+
+    const index = text.indexOf(subject)
+    const piece = text.slice(index, index + 40)
+
+    const quantityMatch = piece.match(/(\d+)\s*(문제|쪽|페이지|강|개|지문|작품|단원)/)
+    const quantity = quantityMatch ? Number(quantityMatch[1]) : null
+    const unit = quantityMatch ? quantityMatch[2] : ''
+
+    let description = piece
+      .split(/[,.，。]/)[0]
+      .replace(/해야 한다|해야 함|추가되었다|추가됨|이번 주에|이번 주|주간/g, '')
+      .trim()
+
+    if (!description) {
+      description = `${subject}${quantity ? ` ${quantity}${unit}` : ''}`
+    }
+
+    plans.push({
+      subject,
+      targetDescription: description,
+      targetQuantity: quantity,
+      estimatedRequiredTime: null,
+      priority: 3,
+      riskLevel: 'unknown',
+    })
+  }
+
+  return plans
+}
+
+function buildPlanUpdatesFromAnalysis({ analysis, message }) {
+  const planUpdates = [...(analysis.weeklyPlanUpdates || [])]
+
+  for (const event of analysis.events || []) {
+    if (
+      event.eventType === 'weekly_plan_upsert' ||
+      event.eventType === 'weekly_plan_create' ||
+      event.eventType === 'weekly_plan_update'
+    ) {
+      planUpdates.push({
+        subject: event.subject || '미상',
+        targetDescription: event.taskDescription || message,
+        targetQuantity: event.targetQuantity || event.quantityDone || null,
+        estimatedRequiredTime: event.inferredData?.estimatedRequiredTime || null,
+        priority: event.inferredData?.priority || 3,
+        riskLevel: event.inferredData?.riskLevel || 'unknown',
+      })
+    }
+  }
+
+  const deterministicPlans = extractPlansFromText(message)
+  planUpdates.push(...deterministicPlans)
+
+  const unique = []
+  const seen = new Set()
+
+  for (const plan of planUpdates) {
+    const key = `${plan.subject}-${plan.targetDescription}`
+    if (seen.has(key)) continue
+    seen.add(key)
+    unique.push(plan)
+  }
+
+  return unique
+}
+
 async function saveExtractedEvents({ db, user, userMessageId, analysis }) {
   for (const event of analysis.events || []) {
     await db`
@@ -193,29 +268,6 @@ async function handleProgressReport({ db, user, event, message }) {
   `
 }
 
-function buildPlanUpdatesFromAnalysis({ analysis, message }) {
-  const planUpdates = [...(analysis.weeklyPlanUpdates || [])]
-
-  for (const event of analysis.events || []) {
-    if (
-      event.eventType === 'weekly_plan_upsert' ||
-      event.eventType === 'weekly_plan_create' ||
-      event.eventType === 'weekly_plan_update'
-    ) {
-      planUpdates.push({
-        subject: event.subject || '미상',
-        targetDescription: event.taskDescription || message,
-        targetQuantity: event.targetQuantity || event.quantityDone || null,
-        estimatedRequiredTime: event.inferredData?.estimatedRequiredTime || null,
-        priority: event.inferredData?.priority || 3,
-        riskLevel: event.inferredData?.riskLevel || 'unknown',
-      })
-    }
-  }
-
-  return planUpdates
-}
-
 async function saveWeeklyPlanUpdates({ db, user, analysis, message }) {
   const { weekStart, weekEnd } = getWeekRange()
   const planUpdates = buildPlanUpdatesFromAnalysis({ analysis, message })
@@ -267,12 +319,6 @@ async function applyEvents({ db, user, userMessageId, message, analysis }) {
 
     if (event.eventType === 'progress_report') {
       await handleProgressReport({ db, user, event, message })
-      continue
-    }
-
-    if (event.eventType === 'daily_close') {
-      // 현재 MVP에서는 이벤트만 저장한다.
-      // 다음 단계에서 오늘 요약, 계획 대비 수행률, 내일 계획 생성 로직을 붙인다.
       continue
     }
   }
@@ -331,10 +377,6 @@ export async function POST(req) {
       SELECT *
       FROM study_sessions
       WHERE user_id = ${user.id}
-        AND (
-          start_time::date = CURRENT_DATE
-          OR created_at::date = CURRENT_DATE
-        )
       ORDER BY created_at DESC
       LIMIT 20
     `
