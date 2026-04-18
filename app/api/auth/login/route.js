@@ -6,21 +6,21 @@ export async function POST(req) {
   try {
     if (!process.env.DATABASE_URL) {
       return NextResponse.json(
-        { error: 'DATABASE_URL 환경변수가 없다. Vercel Environment Variables에 DB 연결 주소를 넣어야 한다.' },
+        { error: 'DATABASE_URL 환경변수가 없다.' },
         { status: 500 }
       )
     }
 
     if (!process.env.AUTH_SECRET) {
       return NextResponse.json(
-        { error: 'AUTH_SECRET 환경변수가 없다. Vercel Environment Variables에 긴 랜덤 문자열을 넣어야 한다.' },
+        { error: 'AUTH_SECRET 환경변수가 없다.' },
         { status: 500 }
       )
     }
 
     await ensureSchema()
     const db = getSql()
-    const { username, password } = await req.json()
+    const { username, password, rememberMe = true } = await req.json()
 
     if (!username || !password) {
       return NextResponse.json({ error: '아이디와 비밀번호를 입력해라.' }, { status: 400 })
@@ -50,7 +50,7 @@ export async function POST(req) {
           ON CONFLICT DO NOTHING
         `
 
-        await setSession(created[0])
+        await setSession(created[0], rememberMe)
         return NextResponse.json({ ok: true, user: created[0] })
       }
 
@@ -63,7 +63,7 @@ export async function POST(req) {
       return NextResponse.json({ error: '로그인 실패' }, { status: 401 })
     }
 
-    await setSession(user)
+    await setSession(user, rememberMe)
 
     return NextResponse.json({
       ok: true,
@@ -77,8 +77,7 @@ export async function POST(req) {
 
     return NextResponse.json(
       {
-        error:
-          '로그인 서버 오류가 발생했다. DATABASE_URL, AUTH_SECRET, DB SSL 설정을 확인해라.',
+        error: '로그인 서버 오류가 발생했다.',
         detail: String(err?.message || err),
       },
       { status: 500 }
