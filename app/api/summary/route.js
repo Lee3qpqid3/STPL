@@ -53,13 +53,31 @@ export async function GET(req) {
       LIMIT 1
     `
 
+    const weeklyPlans = await db`
+      SELECT *
+      FROM weekly_plans
+      WHERE user_id = ${user.id}
+      AND week_start = ${weekStart}::date
+      AND week_end = ${weekEnd}::date
+      AND status = 'active'
+      ORDER BY priority ASC, created_at DESC
+    `
+
+    const allWeeklyPlans = await db`
+      SELECT *
+      FROM weekly_plans
+      WHERE user_id = ${user.id}
+      ORDER BY created_at DESC
+      LIMIT 30
+    `
+
     if (scope === 'today') {
       const sessions = await db`
         SELECT *
         FROM study_sessions
         WHERE user_id = ${user.id}
         ORDER BY created_at DESC
-        LIMIT 50
+        LIMIT 80
       `
 
       const todaySessions = sessions.filter((s) => {
@@ -87,30 +105,16 @@ export async function GET(req) {
 
       return NextResponse.json({
         koreaToday,
+        weekStart,
+        weekEnd,
         activeSession: activeSession[0] || null,
         sessions: todaySessions,
         events,
         todayMinutes,
+        weeklyPlans,
+        allWeeklyPlans,
       })
     }
-
-    const weeklyPlans = await db`
-      SELECT *
-      FROM weekly_plans
-      WHERE user_id = ${user.id}
-      AND week_start = ${weekStart}::date
-      AND week_end = ${weekEnd}::date
-      AND status = 'active'
-      ORDER BY priority ASC, created_at DESC
-    `
-
-    const allWeeklyPlans = await db`
-      SELECT *
-      FROM weekly_plans
-      WHERE user_id = ${user.id}
-      ORDER BY created_at DESC
-      LIMIT 30
-    `
 
     return NextResponse.json({
       weekStart,
