@@ -30,9 +30,13 @@ export default function TodayView() {
       <section className="card wide">
         <p className="eyebrow">TODAY</p>
         <h1>오늘 계획</h1>
-        <p className="muted">
-          한국 날짜 기준: {data?.koreaToday || '불러오는 중'}
-        </p>
+        <p className="muted">한국 날짜 기준: {data?.koreaToday || '불러오는 중'}</p>
+
+        <div className="row">
+          <a className="ghostButton" href="/chat">대화창으로 돌아가기</a>
+          <a className="ghostButton" href="/week">주간 계획</a>
+          <button className="ghostButton" onClick={load}>새로고침</button>
+        </div>
 
         <div className="statGrid">
           <div className="statBox">
@@ -49,18 +53,13 @@ export default function TodayView() {
           </div>
         </div>
 
-        <div className="row">
-          <button className="ghostButton" onClick={load}>새로고침</button>
-          <a className="primaryButton" href="/chat">대화로 계획 조정하기</a>
-        </div>
-
         <h2>오늘 학습 세션</h2>
         <div className="list">
           {(data?.sessions || []).map((s) => (
             <div className="listItem" key={s.id}>
               <b>{s.subject || '과목 미상'} · {s.status}</b>
               <span>
-                {s.duration_minutes || 0}분 · {s.quantity_done || '-'} · {s.perceived_difficulty || '난도 미상'}
+                {s.duration_minutes || 0}분 · 진행량 {s.quantity_done || '-'} · 난도 {s.perceived_difficulty || '미상'}
               </span>
               <span>{s.task_description || s.source_message || '상세 기록 없음'}</span>
             </div>
